@@ -49,7 +49,33 @@ app.post('/login', async (req, res) => {
       }
     )
 
-    return res.status(201).send(token)
+    return res.status(201).send({ token })
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+})
+
+app.post('/register', async (req, res) => {
+  const userSchema = Joi.object({
+    name: Joi.string().trim().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required()
+  })
+
+  const { error } = userSchema.validate(req.body)
+
+  if (error) return res.sendStatus(400)
+
+  try {
+    const { name, email, password } = req.body
+
+    const cryptPassword = bcrypt.hashSync(password, 10)
+
+    const toSend = { name, email, password: cryptPassword, operations: [] }
+
+    await db.collection('users').insertOne(toSend)
+
+    return res.sendStatus(201)
   } catch (error) {
     return res.status(500).send(error)
   }
