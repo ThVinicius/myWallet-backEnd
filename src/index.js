@@ -1,19 +1,15 @@
 import express, { json } from 'express'
-import dotenv from 'dotenv'
 import cors from 'cors'
-import { login, register } from './controllers/authController.js'
-import { getWallet, postAdd } from './controllers/userController.js'
+import authRoute from './routes/authRoute.js'
+import userRoute from './routes/userRoute.js'
 
 const app = express()
 
 app.use(cors())
 app.use(json())
-dotenv.config()
 
-app.post('/login', login)
-app.post('/register', register)
+app.use(authRoute)
 
-app.get('/wallet', getWallet)
-app.post('/add', postAdd)
+app.use(userRoute)
 
 app.listen(5000)
