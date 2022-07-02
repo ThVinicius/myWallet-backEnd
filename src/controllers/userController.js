@@ -5,11 +5,11 @@ export const getWallet = async (_, res) => {
   try {
     const { user } = res.locals
 
-    const { operations } = await db
+    const { operations, name } = await db
       .collection('users')
       .findOne({ _id: user.idUser })
 
-    return res.status(200).send(operations)
+    return res.status(200).send({ operations, name })
   } catch (error) {
     return res.status(500).send(error)
   }
