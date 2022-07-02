@@ -7,8 +7,8 @@ import userRoute from './routes/userRoute.js'
 const app = express()
 dotenv.config()
 
-app.use(cors())
 app.use(json())
+app.use(cors())
 
 app.use(authRoute)
 
