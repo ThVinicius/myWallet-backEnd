@@ -1,9 +1,7 @@
 import Joi from 'joi'
 
-const regex = /(?!^0,00$)(^(0|[1-9][0-9]*),\d{2}$)/
-
 const bodySchema = Joi.object({
-  value: Joi.string().max(11).pattern(regex).required(),
+  value: Joi.number().max(99999999.99).required(),
   description: Joi.string().trim().max(33).required(),
   operation: Joi.string().valid('input', 'exit').required()
 })

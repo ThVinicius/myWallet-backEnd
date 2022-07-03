@@ -1,4 +1,4 @@
-import { db } from '../db/mongo.js'
+import { db, objectId } from '../db/mongo.js'
 import dayjs from 'dayjs'
 
 export const getWallet = async (_, res) => {
@@ -21,12 +21,31 @@ export const postAdd = async (req, res) => {
 
     const time = dayjs().format('DD/MM')
 
+    const id = objectId()
+
     await db
       .collection('users')
       .findOneAndUpdate(
         { _id: user.idUser },
-        { $push: { operations: { ...req.body, time } } }
+        { $push: { operations: { ...req.body, time, id } } }
       )
+
+    return res.sendStatus(200)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
+export const deleteRecord = async (req, res) => {
+  const { idUser: _id } = res.locals.user
+  const { id } = req.params
+
+  try {
+    const { modifiedCount } = await db
+      .collection('users')
+      .updateOne({ _id }, { $pull: { operations: { id: objectId(id) } } })
+
+    if (modifiedCount === 0) return res.sendStatus(404)
 
     return res.sendStatus(200)
   } catch (error) {
