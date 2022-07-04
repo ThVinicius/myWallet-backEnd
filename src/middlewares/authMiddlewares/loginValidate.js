@@ -12,9 +12,11 @@ export default async function loginValidate(req, res, next) {
 
     const user = await db.collection('users').findOne({ email })
 
+    if (user === null) return res.sendStatus(401)
+
     const compare = bcrypt.compareSync(password, user.password)
 
-    if (!compare && user) return res.sendStatus(401)
+    if (!compare) return res.sendStatus(401)
 
     res.locals.user = user
 

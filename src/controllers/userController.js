@@ -52,3 +52,26 @@ export const deleteRecord = async (req, res) => {
     return res.status(500).send(error)
   }
 }
+
+export const editRecord = async (req, res) => {
+  const { value, description } = req.body
+  const { id } = req.params
+  const { idUser: _id } = res.locals.user
+
+  const update = {
+    'operations.$.value': value,
+    'operations.$.description': description
+  }
+
+  try {
+    const { modifiedCount } = await db
+      .collection('users')
+      .updateOne({ _id, 'operations.id': objectId(id) }, { $set: update })
+
+    if (modifiedCount === 0) return res.sendStatus(404)
+
+    return res.sendStatus(200)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
